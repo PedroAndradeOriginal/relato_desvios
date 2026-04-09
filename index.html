@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Desvios</title>
-    <link rel="icon" type="image/png" href="assets/logo.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
@@ -14,85 +13,78 @@
     <div class="container mt-5">
         <div class="card shadow">
             <div class="card-body">
-                <div class="d-flex align-items-center mb-4">
-                    <img src="assets/logo.png" alt="Logo" style="height: 40px; margin-right: 10px;">
-                    <h4 class="mb-0">Registro de Desvios</h4>
-                </div>
+
+                <h4 class="mb-4">Registro de Desvios</h4>
 
                 <form id="formDesvio">
 
-                    <!-- Tipo de relato -->
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="anonimo">
-                        <label class="form-check-label">Relato Anônimo</label>
-                    </div>
-
-                    <!-- Nome -->
-                    <div class="mb-3" id="grupoNome">
-                        <label class="form-label">Nome</label>
-                        <input type="text" class="form-control" id="nome">
-                    </div>
-
-                    <!-- Data -->
                     <div class="mb-3">
-                        <label class="form-label">Data</label>
-                        <input type="date" class="form-control" id="data" max="">
+                        <label>Data</label>
+                        <input type="date" class="form-control" id="data">
                     </div>
 
-                    <!-- Local -->
                     <div class="mb-3">
-                        <label class="form-label">Local</label>
-                        <input type="text" class="form-control" id="local">
+                        <label>Identificado por</label>
+                        <input type="text" class="form-control" id="identificadoPor">
                     </div>
 
-                    <!-- Desvio -->
                     <div class="mb-3">
-                        <label class="form-label">Desvio</label>
-                        <textarea class="form-control" id="desvio" rows="3"></textarea>
+                        <label>Função</label>
+                        <input type="text" class="form-control" id="funcao">
                     </div>
 
-                    <!-- Sugestão -->
                     <div class="mb-3">
-                        <label class="form-label">Sugestão de Solução</label>
-                        <textarea class="form-control" id="sugestao" rows="3"></textarea>
+                        <label>Origem</label>
+                        <input type="text" class="form-control" id="origem">
                     </div>
 
-                    <!-- Status -->
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="resolvido">
-                        <label class="form-check-label">Resolvido na hora</label>
-                    </div>
-
-                    <!-- Prazo -->
-                    <div class="mb-3" id="grupoPrazo">
-                        <label class="form-label">Prazo</label>
-                        <input type="date" class="form-control" id="prazo" min="">
-                    </div>
-
-                    <!-- Responsável -->
                     <div class="mb-3">
-                        <label class="form-label">Responsável</label>
+                        <label>Responsável</label>
                         <input type="text" class="form-control" id="responsavel">
                     </div>
 
-                    <!-- Foto -->
                     <div class="mb-3">
-                        <label class="form-label">Foto</label>
-                        <input type="file" class="form-control" id="foto">
+                        <label>Matrícula</label>
+                        <input type="text" class="form-control" id="matricula">
                     </div>
 
-                    <div class="d-flex justify-content-center">
-                        <button type="submit" class="btn btn-primary" id="btnSalvar">
-                            Enviar
-                        </button>
+                    <div class="mb-3">
+                        <label>Área</label>
+                        <input type="text" class="form-control" id="area">
                     </div>
+
+                    <div class="mb-3">
+                        <label>Tipo de Registro</label>
+                        <input type="text" class="form-control" id="tipoRegistro">
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Descrição</label>
+                        <textarea class="form-control" id="descricao"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Ação Corretiva</label>
+                        <textarea class="form-control" id="acao"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Data Prevista</label>
+                        <input type="date" class="form-control" id="dataPrevista">
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Data Realizada</label>
+                        <input type="date" class="form-control" id="dataRealizada">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100" id="btnSalvar">Enviar</button>
 
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Appwrite -->
     <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.0"></script>
     <script>
 
@@ -101,113 +93,103 @@
             .setProject('69d6501c0033334abce4');
 
         const databases = new Appwrite.Databases(client);
-        const storage = new Appwrite.Storage(client);
 
         const DATABASE_ID = '69d68e020007f2bb948d';
         const COLLECTION_ID = 'registros';
-        const BUCKET_ID = '69d68771003c8de3ef60';
-
-        // Elementos
-        const anonimo = document.getElementById('anonimo');
-        const grupoNome = document.getElementById('grupoNome');
-        const resolvido = document.getElementById('resolvido');
-        const grupoPrazo = document.getElementById('grupoPrazo');
-        const btnSalvar = document.getElementById('btnSalvar');
 
         const campoData = document.getElementById('data');
-        const campoPrazo = document.getElementById('prazo');
+        const campoPrevista = document.getElementById('dataPrevista');
+        const campoRealizada = document.getElementById('dataRealizada');
+        const btnSalvar = document.getElementById('btnSalvar');
 
-        // 📅 Data de hoje
         const hoje = new Date().toISOString().split('T')[0];
 
-        // Define limites
+        // Define data atual apenas para o campo principal
         campoData.value = hoje;
-        campoData.max = hoje;     // não permite futuro
+        campoData.max = hoje;
 
-        campoPrazo.min = hoje;    // não permite passado
-
-        // Toggle nome
-        anonimo.addEventListener('change', () => {
-            grupoNome.style.display = anonimo.checked ? 'none' : 'block';
-        });
-
-        // Toggle prazo
-        resolvido.addEventListener('change', () => {
-            if (resolvido.checked) {
-                grupoPrazo.style.display = 'none';
-                campoPrazo.value = '';
-            } else {
-                grupoPrazo.style.display = 'block';
-            }
-        });
-
-        // Submit
+        // SUBMIT
         document.getElementById('formDesvio').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const dataSelecionada = campoData.value;
-            const prazoSelecionado = campoPrazo.value;
+            const data = campoData.value;
+            const prevista = campoPrevista.value;
+            const realizada = campoRealizada.value;
 
-            // 🔒 Validação extra (segurança)
-            if (dataSelecionada > hoje) {
-                alert('A data não pode ser futura!');
+            // VALIDAÇÃO
+
+            if (data > hoje) {
+                alert('Data não pode ser futura');
                 return;
             }
 
-            if (!resolvido.checked && prazoSelecionado && prazoSelecionado < hoje) {
-                alert('O prazo não pode ser no passado!');
+            if (prevista && prevista < data) {
+                alert('Data prevista não pode ser menor que a data');
                 return;
+            }
+
+            if (realizada) {
+
+                if (!prevista) {
+                    alert('Preencha a data prevista antes');
+                    return;
+                }
+
+                if (realizada > hoje) {
+                    alert('Data realizada não pode ser futura');
+                    return;
+                }
+
+                // REGRA PRINCIPAL
+                if (realizada < prevista) {
+                    alert('Data realizada deve ser maior ou igual à prevista');
+                    return;
+                }
             }
 
             try {
                 btnSalvar.disabled = true;
                 btnSalvar.innerText = 'Salvando...';
 
-                const fileInput = document.getElementById('foto');
-                let fileId = null;
-
-                if (fileInput.files.length > 0) {
-                    const file = fileInput.files[0];
-                    const upload = await storage.createFile(BUCKET_ID, 'unique()', file);
-                    fileId = upload.$id;
-                }
-
                 await databases.createDocument(
                     DATABASE_ID,
                     COLLECTION_ID,
                     'unique()',
                     {
-                        nome: anonimo.checked ? 'Anônimo' : document.getElementById('nome').value,
-                        data: dataSelecionada,
-                        local: document.getElementById('local').value,
-                        desvio: document.getElementById('desvio').value,
-                        sugestao: document.getElementById('sugestao').value,
-                        resolvido: resolvido.checked,
+                        data: data,
+                        identificado_por: document.getElementById('identificadoPor').value,
+                        funcao: document.getElementById('funcao').value,
+                        origem: document.getElementById('origem').value,
                         responsavel: document.getElementById('responsavel').value,
-                        prazo: prazoSelecionado,
-                        foto: fileId
+                        matricula: document.getElementById('matricula').value,
+                        area: document.getElementById('area').value,
+                        tipo_de_registro: document.getElementById('tipoRegistro').value,
+                        descricao: document.getElementById('descricao').value,
+                        acao_corretiva: document.getElementById('acao').value,
+                        data_prevista: prevista,
+                        data_realizada: realizada
                     }
                 );
 
-                alert('Registro salvo com sucesso!');
+                alert('Registro salvo com sucesso');
+
                 document.getElementById('formDesvio').reset();
-
-                // Reset visual
-                grupoNome.style.display = 'block';
-                grupoPrazo.style.display = 'block';
-
-                // Reaplica regras
                 campoData.value = hoje;
-                campoPrazo.min = hoje;
 
             } catch (error) {
-                console.error(error);
-                alert(error.message); 0
+                alert(error.message);
             } finally {
                 btnSalvar.disabled = false;
-                btnSalvar.innerText = 'Salvar';
+                btnSalvar.innerText = 'Enviar';
             }
+
         });
+
+    </script>
+
+</body>
+
+</html>
 
     </script>
 
